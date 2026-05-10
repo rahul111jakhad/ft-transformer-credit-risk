@@ -1,0 +1,37 @@
+# --- Data and trained artifacts (heavy / private) ---
+data/
+artifacts/
+
+# Note: results/ is intentionally NOT ignored — that's where committed
+# paper outputs (summary tables, SHAP plots) live.
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+.python-version
+
+# --- IDE / editor ---
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Optuna study DBs ---
+*.db
+*.sqlite
+
+# --- Logs ---
+*.log
