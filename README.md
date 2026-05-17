@@ -1,16 +1,16 @@
 # Deep Learning for Credit Risk: Evaluating Feature Tokenizer Transformers Against Industry Baselines
 
-> Code repository for an in-progress paper. **Draft stage** — not yet
-> submitted, results subject to change.
+> Code and write-up for an empirical study. **Work in progress** —
+> results subject to change.
 >
 > **Authors:** Rahul Jakhad, Nikhil Mittal, Vaibhav Saxena, Charchit Bahl
 
-## Abstract
+## Summary
 
 The evolution of credit risk modeling has transitioned from traditional
 statistical methods to high-performance tree-based ensembles. However, these
 models rely on axis-aligned, discrete partitions that may struggle to
-represent complex, smooth risk surfaces. This paper investigates the
+represent complex, smooth risk surfaces. This study investigates the
 **Feature Tokenizer Transformer (FT-Transformer)** as a deep learning
 alternative for tabular credit data. We evaluate the architecture against
 three industry baselines — **Logistic Regression**, **Random Forest**, and
@@ -24,6 +24,11 @@ metric framework including **AUC, Gini, KS, and AUCPR**, alongside a
 comparative assessment of training time and architectural hyperparameter
 sensitivity.
 
+> **Scope.** This is an empirical study; the repository — code, notebooks,
+> and curated results — is the primary deliverable. A written report
+> synthesizing the findings can be generated from the committed results once
+> all experiments are complete.
+
 ## Notebooks
 
 The repo is organized as **two notebooks per dataset** — one for the
@@ -35,11 +40,12 @@ preprocessing so results are directly comparable. All notebooks live under
 | :- | :--- | :--- | :--- | :--- |
 | 01 | [`notebooks/01_lending_club_baselines.ipynb`](notebooks/01_lending_club_baselines.ipynb) | Lending Club | LR / RF / XGBoost | ✅ |
 | 02 | [`notebooks/02_home_credit_baselines.ipynb`](notebooks/02_home_credit_baselines.ipynb) | Home Credit | LR / RF / XGBoost | ✅ |
-| 03 | `notebooks/03_lending_club_ft_transformer.ipynb` | Lending Club | FT-Transformer | 🚧 |
+| 03 | [`notebooks/03_lending_club_ft_transformer.ipynb`](notebooks/03_lending_club_ft_transformer.ipynb) | Lending Club | FT-Transformer (full experiments) | ✅ |
 | 04 | `notebooks/04_home_credit_ft_transformer.ipynb` | Home Credit | FT-Transformer | 🚧 |
 
 [![Open 01 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rahul111jakhad/ft-transformer-credit-risk/blob/main/notebooks/01_lending_club_baselines.ipynb)
 [![Open 02 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rahul111jakhad/ft-transformer-credit-risk/blob/main/notebooks/02_home_credit_baselines.ipynb)
+[![Open 03 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rahul111jakhad/ft-transformer-credit-risk/blob/main/notebooks/03_lending_club_ft_transformer.ipynb)
 
 ## Datasets
 
@@ -62,7 +68,7 @@ preprocessing so results are directly comparable. All notebooks live under
 | Logistic Regression | scikit-learn | No | Optuna (20 trials) |
 | Random Forest | scikit-learn | No | Optuna (10 trials) |
 | XGBoost | xgboost | Yes | Optuna (30 trials) |
-| FT-Transformer | rtdl-revisiting-models | Yes | Optuna (forthcoming) |
+| FT-Transformer | rtdl-revisiting-models | Yes | Optuna (30 trials) |
 
 For each model we report performance with **default hyperparameters** and
 with **Optuna-tuned hyperparameters**, on train / validation / test splits.
@@ -92,6 +98,13 @@ with **Optuna-tuned hyperparameters**, on train / validation / test splits.
   Test-set summaries are accumulated in `results/summary_test_metrics_<dataset>.csv`
   with append-and-dedupe semantics — re-running a model overwrites its row,
   adding a new model appends.
+* **FT-Transformer analyses.** Beyond the headline metrics, the FT-Transformer
+  notebook includes: an imbalance-handling study (plain vs weighted BCE vs
+  focal loss), a categorical-tokenizer ablation, hyperparameter sensitivity
+  sweeps, a sample-size study, an MLP baseline, attention-map extraction
+  (per-feature and per-head, compared against XGBoost SHAP rankings), and a
+  decision-boundary analysis that contrasts the axis-aligned, piecewise-constant
+  surface of tree ensembles against the smooth surface of FT-Transformer.
 
 ## Repository layout
 
@@ -103,11 +116,12 @@ with **Optuna-tuned hyperparameters**, on train / validation / test splits.
 │   ├── datasets.py                     # Dataset-specific loaders / cleaners
 │   ├── evaluation.py                   # AUC / Gini / KS / AUCPR / top-decile
 │   ├── interpretation.py               # SHAP helpers for tree models
-│   └── tracking.py                     # Logger, timing, artifact persistence
+│   ├── tracking.py                     # Logger, timing, artifact persistence
+│   └── ft_transformer_utils.py         # PyTorch training loop + FTTransformerWrapper
 ├── notebooks/
 │   ├── 01_lending_club_baselines.ipynb     # LR / RF / XGBoost on Lending Club
 │   ├── 02_home_credit_baselines.ipynb      # LR / RF / XGBoost on Home Credit
-│   ├── 03_lending_club_ft_transformer.ipynb   # forthcoming
+│   ├── 03_lending_club_ft_transformer.ipynb   # FT-Transformer + full experiments
 │   └── 04_home_credit_ft_transformer.ipynb    # forthcoming
 ├── data/                               # Raw CSVs (NOT committed)
 │   ├── accepted_2007_to_2018Q4.csv
@@ -124,10 +138,10 @@ with **Optuna-tuned hyperparameters**, on train / validation / test splits.
 │   │   ├── shap_importance_*.csv
 │   │   └── shap_*.png
 │   └── home_credit/                          # same structure
-├── results/                            # Paper-ready summaries (COMMITTED)
+├── results/                            # Curated summary tables (COMMITTED)
 │   ├── summary_test_metrics_lending_club.csv
 │   ├── summary_test_metrics_home_credit.csv
-│   └── (figures going into the paper)
+│   └── (figures for the write-up)
 ├── requirements.txt
 ├── LICENSE
 ├── .gitignore
@@ -145,31 +159,38 @@ notebooks, FT-Transformer training and analysis for the FT notebooks).
 * **`artifacts/`** — raw per-run outputs, gitignored. Re-generated by
   re-running notebooks. Includes models, predictions, Optuna histories,
   per-run metric CSVs, environment snapshots.
-* **`results/`** — curated paper-ready outputs, committed to git. The
-  cross-run summary tables and figures that you'd cite in the paper. Grows
+* **`results/`** — curated, write-up-ready outputs, committed to git. The
+  cross-run summary tables and figures for the eventual report. Grows
   monotonically: each `save_run_artifacts` call appends (or updates) one
   row per `(dataset, model_name)`.
 
 This separation prevents accidentally committing hundreds of MB of
-intermediate state while keeping the paper-ready outputs in version control.
+intermediate state while keeping the curated outputs in version control.
 
-Each baseline notebook follows the same 10-section structure so they read
-side-by-side:
+### Notebook structure
 
-1. Setup and imports
-2. Data loading
-3. Domain-specific cleaning + target definition
-4. Leakage-free preprocessing pipeline (split → filter → encode → scale)
-5. Evaluation metric helper
-6. Logistic Regression (default → tuned)
-7. Random Forest (default → tuned)
-8. XGBoost (default → tuned, GPU)
-9. SHAP feature importance for XGBoost and RF
-10. Test-set summary table
+The two **baseline notebooks** (01, 02) share the same structure: setup,
+data loading, domain cleaning, the shared preprocessing pipeline, then
+Logistic Regression / Random Forest / XGBoost (each default → Optuna-tuned),
+SHAP feature importance, and a test-set summary table.
 
-The FT-Transformer notebooks will reuse sections 1–5 verbatim and replace
-sections 6–10 with the transformer pipeline so that splits and preprocessing
-match the baselines exactly.
+The **FT-Transformer notebook** (03) is organized in two parts that run
+top-to-bottom in a single notebook:
+
+* **Part 1 — Sanity run (§1–8).** Setup, the shared preprocessing pipeline
+  (reused verbatim from the baselines so splits and features match exactly),
+  PyTorch DataLoaders, and a single FT-Transformer trained with the original
+  FT-Transformer paper's recommended default hyperparameters, to confirm the
+  architecture trains end-to-end.
+* **Part 2 — Full experiments (§9–19).** Imbalance-handling study,
+  categorical-tokenizer ablation, 30-trial Optuna tuning, the final tuned
+  model, hyperparameter sensitivity sweeps, a sample-size study, an MLP
+  baseline, attention-map extraction, an optional seed-variance study, and a
+  decision-boundary analysis.
+
+Because preprocessing lives in `src/`, the FT-Transformer notebook operates
+on byte-identical splits and features to the baselines — model comparisons
+are fair by construction.
 
 ## Running the notebooks
 
@@ -209,10 +230,10 @@ driver (Colab T4 / A100 work out of the box). On CPU-only machines, change
 
 ## Contributing (for the team)
 
-The four of us are working on this paper. To keep the repo history clean:
+The four of us are working on this study. To keep the repo history clean:
 
 * **One branch per workstream**, e.g. `baselines/lending-club-fixes`,
-  `ft-transformer/home-credit`, `paper/abstract`. Don't push directly to
+  `ft-transformer/home-credit`, `docs/report-draft`. Don't push directly to
   `main`.
 * **Pull requests with one review** before merging. Branch protection on
   `main` enforces this.
@@ -222,8 +243,8 @@ The four of us are working on this paper. To keep the repo history clean:
   Anything you want to publish goes under `results/`.
 * **Pin random seeds.** All notebooks set `RANDOM_SEED = 42` and pass it to
   Optuna, sklearn, and torch. Don't override locally without flagging it.
-* **Tag releases for paper milestones**, e.g. `v0.1-draft`,
-  `v1.0-submission`, `v1.1-revision`.
+* **Tag releases for project milestones**, e.g. `v0.1-draft`,
+  `v1.0-study-complete`, `v1.1-revision`.
 
 ## License
 

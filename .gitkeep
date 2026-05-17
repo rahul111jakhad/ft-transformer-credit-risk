@@ -1,0 +1,3 @@
+# Paper-ready outputs are committed here. Summary CSVs are appended to by
+# notebooks via save_run_artifacts. Plots and figures going into the paper
+# can be copied here manually.

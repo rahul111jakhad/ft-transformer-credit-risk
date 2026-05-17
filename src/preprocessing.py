@@ -200,7 +200,12 @@ def preprocess_data_pipeline(
         X_test[col] = le.transform(X_test[col].astype(str))
 
         encoders[col] = le
-        cat_cardinalities.append(int(X_train[col].nunique()))
+        # Use the encoder's full vocabulary, NOT X_train.nunique() — the
+        # encoder is extended with unseen valid/test categories above, so its
+        # vocabulary size is what FT-Transformer's embedding layer must match.
+        # Sizing embeddings to the train-only count would cause out-of-bounds
+        # indexing on unseen valid/test categories at inference time.
+        cat_cardinalities.append(len(le.classes_))
 
     log("Step 6: Standard scaling (numeric)")
     scaler = StandardScaler()

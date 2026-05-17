@@ -30,6 +30,10 @@ env/
 Thumbs.db
 
 # --- Optuna study DBs ---
+# The FT-Transformer Optuna study persists to a SQLite .db under artifacts/
+# (already ignored). These rules also catch stray .db files elsewhere. If you
+# ever want to commit a study DB for reproducibility, place it under results/
+# and force-add it with `git add -f`.
 *.db
 *.sqlite
 
