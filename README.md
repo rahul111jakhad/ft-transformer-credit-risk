@@ -41,11 +41,12 @@ preprocessing so results are directly comparable. All notebooks live under
 | 01 | [`notebooks/01_lending_club_baselines.ipynb`](notebooks/01_lending_club_baselines.ipynb) | Lending Club | LR / RF / XGBoost | ✅ |
 | 02 | [`notebooks/02_home_credit_baselines.ipynb`](notebooks/02_home_credit_baselines.ipynb) | Home Credit | LR / RF / XGBoost | ✅ |
 | 03 | [`notebooks/03_lending_club_ft_transformer.ipynb`](notebooks/03_lending_club_ft_transformer.ipynb) | Lending Club | FT-Transformer (full experiments) | ✅ |
-| 04 | `notebooks/04_home_credit_ft_transformer.ipynb` | Home Credit | FT-Transformer | 🚧 |
+| 04 | [`notebooks/04_home_credit_ft_transformer.ipynb`](notebooks/04_home_credit_ft_transformer.ipynb) | Home Credit | FT-Transformer (full experiments) | ✅ |
 
 [![Open 01 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rahul111jakhad/ft-transformer-credit-risk/blob/main/notebooks/01_lending_club_baselines.ipynb)
 [![Open 02 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rahul111jakhad/ft-transformer-credit-risk/blob/main/notebooks/02_home_credit_baselines.ipynb)
 [![Open 03 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rahul111jakhad/ft-transformer-credit-risk/blob/main/notebooks/03_lending_club_ft_transformer.ipynb)
+[![Open 04 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rahul111jakhad/ft-transformer-credit-risk/blob/main/notebooks/04_home_credit_ft_transformer.ipynb)
 
 ## Datasets
 
@@ -122,7 +123,7 @@ with **Optuna-tuned hyperparameters**, on train / validation / test splits.
 │   ├── 01_lending_club_baselines.ipynb     # LR / RF / XGBoost on Lending Club
 │   ├── 02_home_credit_baselines.ipynb      # LR / RF / XGBoost on Home Credit
 │   ├── 03_lending_club_ft_transformer.ipynb   # FT-Transformer + full experiments
-│   └── 04_home_credit_ft_transformer.ipynb    # forthcoming
+│   └── 04_home_credit_ft_transformer.ipynb    # FT-Transformer + full experiments
 ├── data/                               # Raw CSVs (NOT committed)
 │   ├── accepted_2007_to_2018Q4.csv
 │   └── home_credit_default.csv

@@ -1,6 +1,7 @@
 # --- Data and trained artifacts (heavy / private) ---
 data/
 artifacts/
+results/
 
 # Note: results/ is intentionally NOT ignored — that's where committed
 # paper outputs (summary tables, SHAP plots) live.
